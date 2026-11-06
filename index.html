@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#09070f" />
+  <title>Kenzz API — Owner Console</title>
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <div class="glow glow-a"></div><div class="glow glow-b"></div>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand"><span class="brand-mark">K</span><div><b>KENZZ API</b><small>OWNER CONSOLE</small></div></div>
+      <span class="status"><i></i> SYSTEM READY</span>
+    </header>
+
+    <section id="loginPanel" class="panel login-panel">
+      <p class="eyebrow">PRIVATE ACCESS</p>
+      <h1>Welcome back.</h1>
+      <p class="muted">Masuk menggunakan akun Owner Supabase.</p>
+      <form id="loginForm">
+        <label>Email<input id="email" type="email" autocomplete="username" required placeholder="owner@email.com"></label>
+        <label>Password<input id="password" type="password" autocomplete="current-password" required placeholder="Password"></label>
+        <button class="primary" type="submit">Sign in <span>→</span></button>
+        <p id="loginMessage" class="message"></p>
+      </form>
+    </section>
+
+    <section id="dashboard" hidden>
+      <div class="welcome"><div><p class="eyebrow">CONTROL CENTER</p><h1>API Dashboard</h1><p class="muted">Kelola akses API Kenzz dari satu tempat.</p></div><button id="logoutBtn" class="ghost">Keluar</button></div>
+      <div class="stats">
+        <article class="stat"><span>API KEYS</span><strong id="keyCount">0</strong><small>Terdaftar</small></article>
+        <article class="stat"><span>ACTIVE KEYS</span><strong id="activeCount">0</strong><small>Siap digunakan</small></article>
+        <article class="stat"><span>GATEWAY</span><strong class="online">ONLINE</strong><small>Server status</small></article>
+      </div>
+      <section class="panel">
+        <div class="section-head"><div><p class="eyebrow">ACCESS MANAGEMENT</p><h2>API Keys</h2></div><button id="createKeyBtn" class="primary compact">＋ Generate Key</button></div>
+        <div id="newSecret" class="secret-box" hidden><b>API Key baru — salin sekarang</b><code id="secretText"></code><button id="copySecret" class="ghost">Salin</button></div>
+        <div id="keyList" class="key-list"><p class="muted">Memuat API keys...</p></div>
+        <p id="dashboardMessage" class="message"></p>
+      </section>
+      <section class="panel docs">
+        <p class="eyebrow">QUICK START</p><h2>Gunakan API Gateway</h2>
+        <p class="muted">Endpoint kompatibel dengan format chat completions.</p>
+        <code class="endpoint">POST /api/gateway/chat</code>
+        <pre><code>{
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "messages": [
+    {"role": "user", "content": "Halo!"}
+  ]
+}</code></pre>
+        <p class="muted tiny">Header: Authorization: Bearer KENZZ_API_KEY</p>
+      </section>
+    </section>
+    <footer>KENZZ API <span>•</span> PRIVATE API INFRASTRUCTURE</footer>
+  </main>
+  <script type="module" src="/src/app.js"></script>
+</body>
+</html>
