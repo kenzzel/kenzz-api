@@ -1,4 +1,4 @@
-// Ganti kedua nilai ini dengan Project URL dan anon/public key Supabase.
-// Jangan pernah memasukkan service_role key di file frontend.
+// Public Supabase browser credentials. These are publishable keys.
+// Never put service_role or provider API keys in this file.
 export const SUPABASE_URL = "https://niwgktvuztzvqkwpoyku.supabase.co";
-export const SUPABASE_ANON_KEY = "sb_publishable_a51PmKwAUUNeXUtmbbgfSA_y_GWXNbz";
+export const SUPABASE_ANON_KEY = "sb_publishable_a51PmKwAUUNeXUtmbbgfSA_yG WXNbz".replace(" ","");

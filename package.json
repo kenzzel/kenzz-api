@@ -1,18 +1,10 @@
 {
   "name": "kenzz-api",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "private": true,
   "type": "module",
-  "scripts": {
-    "dev": "vercel dev"
-  },
-  "dependencies": {
-    "@supabase/supabase-js": "^2.57.0"
-  },
-  "devDependencies": {
-    "vercel": "^48.0.0"
-  },
-  "engines": {
-    "node": "22.x"
-  }
+  "scripts": { "dev": "vercel dev" },
+  "dependencies": { "@supabase/supabase-js": "^2.57.0" },
+  "devDependencies": { "vercel": "^48.0.0" },
+  "engines": { "node": "22.x" }
 }

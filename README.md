@@ -1,91 +1,53 @@
-# Kenzz API
+# Kenzz API v2 — Complete Starter
 
-Owner-only API management console + OpenAI-compatible multi-provider gateway.
+## Struktur
+- `src/`: frontend, CSS, Supabase browser config
+- `api/`: Vercel serverless functions
+- `supabase/schema.sql`: database, profiles, quotas, atomic rate-limit RPC
 
-## Stack
-- Node.js 22
-- Vercel Functions
-- Supabase Auth + Postgres
-- Vanilla HTML/CSS/JS
+## Deploy / upgrade
+1. Backup repository and Supabase database first.
+2. Replace repository contents with the contents of this ZIP (keep folders).
+3. In Supabase SQL Editor, run `supabase/schema.sql`.
+   - This is safe for existing tables with compatible columns, but review first if you customized the schema.
+4. In `src/config.js`, verify the Supabase URL and publishable/anon key.
+5. Vercel Project Settings -> Environment Variables:
+   - SUPABASE_URL
+   - SUPABASE_ANON_KEY
+   - SUPABASE_SERVICE_ROLE_KEY
+   - OWNER_EMAIL
+   - provider keys and base URLs you use
+6. Set Vercel Node.js runtime to 22.x if available and redeploy.
 
-## Included in this starter
-- Owner login through Supabase Auth
-- Owner-only API key generation and revocation
-- API keys stored as SHA-256 hashes (secret shown once)
-- Chat completion gateway for OpenAI, Groq, DeepSeek, and Together
-- Basic request usage logging
-- Dark responsive dashboard
+## Owner
+Create the Owner user through Supabase Authentication -> Users.
+Set `OWNER_EMAIL` to exactly that account email in Vercel.
+The Owner console gate uses this email. The frontend Owner navigation is also gated by matching email, but backend authorization is authoritative.
 
-## 1. Create Supabase project
-1. Create a project at https://supabase.com.
-2. Open SQL Editor.
-3. Paste and run `supabase/schema.sql`.
-4. Open Authentication -> Users -> Add user.
-5. Create the Owner account using an email and password.
-6. Copy Project URL, anon/public key, and service_role key from Project Settings -> API.
+## User registration
+Users register from the login screen. Supabase email confirmation may need to be completed depending on Auth settings.
+A database trigger creates their profile and default quota row.
 
-## 2. Configure frontend
-Edit `src/config.js`:
-- `SUPABASE_URL`: your Project URL
-- `SUPABASE_ANON_KEY`: your anon/public key
+## Gateway
+POST `/api/gateway/chat`
+Headers:
+`Authorization: Bearer kenzz_live_...`
+`Content-Type: application/json`
 
-Never put the `service_role` key in `src/config.js`.
-
-## 3. Configure Vercel environment variables
-Import this project into Vercel, then add variables from `.env.example`:
-- `SUPABASE_URL`
-- `SUPABASE_ANON_KEY`
-- `SUPABASE_SERVICE_ROLE_KEY`
-- `OWNER_EMAIL`
-- provider API keys you intend to use
-- matching provider base URLs
-
-Set `OWNER_EMAIL` to the exact email used for the Owner account.
-Redeploy after changing environment variables.
-
-## 4. Deploy
-1. Upload the project to a GitHub repository.
-2. In Vercel, select Add New -> Project and import that repository.
-3. Framework preset: Other.
-4. Build command: leave empty; output directory: `.`.
-5. Add environment variables and deploy.
-6. Open the deployment URL and sign in with the Owner account.
-
-## 5. Local development (Android / Termux)
-Install Node.js in Termux, then:
-```bash
-pkg update && pkg upgrade
-pkg install nodejs-lts git
-npm install
-cp .env.example .env
-npx vercel login
-npx vercel dev
+JSON:
+```json
+{
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "messages": [{"role":"user","content":"Halo"}]
+}
 ```
-Set the same environment variables in Vercel project settings or use a local `.env` file.
-Open the local URL shown by Vercel in your Android browser.
+Supported provider ids: `openai`, `groq`, `deepseek`, `together`, `mistral`.
 
-## 6. Use the gateway
-Create an API key in the Owner dashboard. Copy it immediately; it is displayed only once.
-
-Request:
-```bash
-curl -X POST "https://YOUR-DOMAIN.vercel.app/api/gateway/chat" \
-  -H "Authorization: Bearer kenzz_live_YOUR_KEY" \
-  -H "Content-Type: application/json" \
-  -d '{
-    "provider": "openai",
-    "model": "gpt-4o-mini",
-    "messages": [{"role":"user","content":"Halo dari Kenzz API"}]
-  }'
-```
-
-Supported provider values: `openai`, `groq`, `deepseek`, `together`.
-Each provider requires its own valid provider API key in Vercel environment variables.
-
-## Important security notes
-- Do not share the Supabase service_role key or provider keys.
-- Do not commit `.env` to GitHub.
-- Revoke a key immediately if it is exposed.
-- Use HTTPS only.
-- This is a starter MVP, not a fully hardened public API marketplace. Before opening public registration, add per-key rate limiting, monthly quotas, billing, abuse detection, audit alerts, and stricter model allowlists.
-- The current dashboard is Owner-only. End-user registration and self-service key management are intentionally not enabled in this first release.
+## Important notes
+- API keys are stored as SHA-256 hashes and shown only once at creation.
+- Rate limiting and monthly quotas use a PostgreSQL RPC. Monthly usage counts successful/failed gateway requests after they are inserted into `api_usage`; quota check happens before provider call.
+- Owner can block accounts and set per-user RPM/monthly request limits.
+- Provider keys and Supabase service-role key belong only in Vercel Environment Variables.
+- This is a functional MVP starter, not a billing-ready commercial platform. It does not yet include payments, balance/wallet, automated invoices, email notifications, or a full audit UI.
+- Before public production, add CAPTCHA/email abuse controls, provider model allowlists, stricter spend caps, monitoring/alerts, and test schema migration in a staging project.
