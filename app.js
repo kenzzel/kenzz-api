@@ -36,6 +36,7 @@ function navigate(page){
   if(page==="users"&&isOwner) loadUsers();
   if(page==="limits"&&isOwner) loadLimits();
   if(page==="providers") loadHealth();
+  if(page==="monitor") loadMonitor();
 }
 async function refreshAll(){ await Promise.allSettled([loadKeys(),loadUsage(),loadHealth()]); }
 async function loadKeys(){
@@ -113,6 +114,18 @@ async function loadLimits(){
     }
   }catch(e){msg(e.message,true);}
 }
+async function loadMonitor(){
+  try {
+    const [ping, metric] = await Promise.all([api("/api/monitor/ping"), api("/api/monitor/metrics")]);
+    $("pingList").innerHTML="";
+    if(!ping.targets?.length) $("pingList").textContent="Belum ada MONITOR_TARGETS di Vercel.";
+    for(const t of ping.targets||[]){const row=document.createElement("div");row.className="data-row";const info=document.createElement("div");const b=document.createElement("b");b.textContent=t.url;const small=document.createElement("small");small.textContent=t.online?`${t.status} • ${t.latency_ms} ms`:t.error;info.append(b,small);const tag=document.createElement("span");tag.className=`tag ${t.online?"active":"revoked"}`;tag.textContent=t.online?"Online":"Offline";row.append(info,tag);$("pingList").append(row);}
+    const m=metric.metrics;$("metricsList").innerHTML="";
+    if(!m){$("metricsList").textContent="Belum ada data. Pasang scripts/vps-agent.sh di VPS dan isi VPS_AGENT_TOKEN.";return;}
+    const vals=[["Hostname",m.hostname],["CPU",`${Number(m.cpu_percent).toFixed(1)}%`],["RAM",`${m.ram_used_mb} / ${m.ram_total_mb} MB`],["Disk",`${Number(m.disk_used_percent).toFixed(1)}%`],["Uptime",`${Math.floor(m.uptime_seconds/3600)} jam`],["Last update",new Date(m.created_at).toLocaleString()]];
+    for(const [k,v] of vals){const row=document.createElement("div");row.className="data-row";const a=document.createElement("b");a.textContent=k;const z=document.createElement("span");z.textContent=v;row.append(a,z);$("metricsList").append(row);}
+  } catch(e){$("pingList").textContent=e.message;}
+}
 async function loadHealth(){
   try{const d=await fetch("/api/health").then(r=>r.json());$("providerList").innerHTML="";
     for(const [name,enabled] of Object.entries(d.providers||{})){const row=document.createElement("div");row.className="data-row";const b=document.createElement("b");b.textContent=name.toUpperCase();const tag=document.createElement("span");tag.className=`tag ${enabled?"active":"revoked"}`;tag.textContent=enabled?"Configured":"Not configured";row.append(b,tag);$("providerList").append(row);}
@@ -153,6 +166,7 @@ $("copySecret").onclick=async()=>{await navigator.clipboard.writeText($("secretV
 $("logout").onclick=async()=>{await supabase.auth.signOut();session=null;showAuth();};
 document.querySelectorAll(".nav[data-page]").forEach(b=>b.onclick=()=>navigate(b.dataset.page));
 document.querySelectorAll("[data-goto]").forEach(b=>b.onclick=()=>navigate(b.dataset.goto));
+$("refreshMonitor").onclick=loadMonitor;
 $("refreshUsage").onclick=loadUsage;$("refreshUsers").onclick=loadUsers;$("refreshHealth").onclick=loadHealth;
 $("runTest").onclick=async()=>{
   const id=$("testerKey").value,key=keysCache.find(k=>k.id===id);

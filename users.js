@@ -1,6 +1,6 @@
-import { adminDb } from "../_lib/supabase.js";
-import { requireOwner } from "../_lib/auth.js";
-import { send, bodyObject } from "../_lib/http.js";
+import { adminDb } from "../../_lib/supabase.js";
+import { requireOwner } from "../../_lib/auth.js";
+import { send, bodyObject } from "../../_lib/http.js";
 export default async function handler(req, res) {
   const owner = await requireOwner(req, res);
   if (!owner) return;

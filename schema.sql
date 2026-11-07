@@ -147,3 +147,13 @@ insert into public.api_services(slug,name,description) values
 ('chat-completions','Chat Completions','OpenAI-compatible chat completion gateway'),
 ('health','Health Check','Kenzz API health endpoint')
 on conflict(slug) do nothing;
+
+
+-- VPS agent metrics (service-role only; no public policies).
+create table if not exists public.vps_metrics (
+ id bigint generated always as identity primary key, hostname text not null, cpu_percent numeric not null,
+ ram_used_mb numeric not null, ram_total_mb numeric not null, disk_used_percent numeric not null,
+ uptime_seconds numeric not null, created_at timestamptz not null default now()
+);
+create index if not exists vps_metrics_created_idx on public.vps_metrics(created_at desc);
+alter table public.vps_metrics enable row level security;
