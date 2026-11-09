@@ -37,7 +37,6 @@
 <button class="nav" data-page="users">♙ <span>User Management</span></button>
 <button class="nav" data-page="limits">◷ <span>Quota & Limits</span></button>
 <button class="nav" data-page="providers">✧ <span>Provider Status</span></button>
-<button class="nav" data-page="monitor">⌁ <span>VPS Monitoring</span></button>
 </div>
 <div class="side-bottom"><span id="userEmail" class="muted tiny"></span><button id="logout" class="nav">↪ <span>Keluar</span></button></div>
 </aside>
@@ -65,25 +64,24 @@
 <section class="page" id="page-docs"><div class="page-head"><div><p class="eyebrow">DEVELOPER RESOURCES</p><h1>Documentation</h1><p class="muted">OpenAI-compatible chat completion gateway.</p></div></div>
 <div class="panel content-panel"><h2>Endpoint</h2><code class="endpoint">POST /api/gateway/chat</code><h3>Headers</h3><pre>Authorization: Bearer YOUR_KENZZ_API_KEY
 Content-Type: application/json</pre><h3>Request body</h3><pre>{
-  "provider": "openai",
-  "model": "gpt-4o-mini",
+  "provider": "auto",
+  "model": "kenzz-auto",
   "messages": [
     {"role": "user", "content": "Halo Kenzz API"}
   ]
-}</pre><h3>Supported providers</h3><p class="muted">openai · groq · deepseek · together · mistral</p><h3>cURL example</h3><pre>curl -X POST "https://YOUR-DOMAIN.vercel.app/api/gateway/chat" \\
+}</pre><h3>Supported providers</h3><p class="muted">auto · groq · gemini · openai · deepseek · mistral · together</p><h3>cURL example</h3><pre>curl -X POST "https://YOUR-DOMAIN.vercel.app/api/gateway/chat" \\
 -H "Authorization: Bearer YOUR_KENZZ_API_KEY" \\
 -H "Content-Type: application/json" \\
--d '{"provider":"openai","messages":[{"role":"user","content":"Halo"}]}'</pre></div></section>
+-d '{"provider":"auto","model":"kenzz-auto","messages":[{"role":"user","content":"Halo"}]}'</pre></div></section>
 
 <section class="page" id="page-tester"><div class="page-head"><div><p class="eyebrow">PLAYGROUND</p><h1>API Tester</h1><p class="muted">Uji gateway menggunakan API Key akunmu.</p></div></div>
-<div class="panel content-panel tester"><label>API Key<select id="testerKey"><option value="">Pilih API Key aktif</option></select></label><label>Provider<select id="testerProvider"><option>openai</option><option>groq</option><option>deepseek</option><option>together</option><option>mistral</option></select></label><label>Model<input id="testerModel" placeholder="Kosongkan untuk model default"></label><label>Pesan<textarea id="testerPrompt" rows="4">Halo! Perkenalkan dirimu.</textarea></label><button id="runTest" class="btn primary">Run request</button><pre id="testerResult">Response akan muncul di sini.</pre></div></section>
+<div class="panel content-panel tester"><label>API Key<select id="testerKey"><option value="">Pilih API Key aktif</option></select></label><label>Provider<select id="testerProvider"><option value="auto">auto (kenzz-auto)</option><option>groq</option><option>gemini</option><option>openai</option><option>deepseek</option><option>mistral</option><option>together</option></select></label><label>Model<input id="testerModel" placeholder="Kosongkan untuk model default"></label><label>Pesan<textarea id="testerPrompt" rows="4">Halo! Perkenalkan dirimu.</textarea></label><button id="runTest" class="btn primary">Run request</button><pre id="testerResult">Response akan muncul di sini.</pre></div></section>
 
 <section class="page" id="page-users"><div class="page-head"><div><p class="eyebrow">OWNER CONTROL</p><h1>User Management</h1><p class="muted">Kelola akses akun pengguna.</p></div><button id="refreshUsers" class="btn ghost">Refresh</button></div><div class="panel content-panel"><div id="userList" class="table-list">Memuat pengguna...</div></div></section>
 
 <section class="page" id="page-limits"><div class="page-head"><div><p class="eyebrow">OWNER CONTROL</p><h1>Quota & Limits</h1><p class="muted">Atur batas request pengguna.</p></div></div><div class="panel content-panel"><div id="limitList" class="table-list">Memuat limit...</div></div></section>
 
 <section class="page" id="page-providers"><div class="page-head"><div><p class="eyebrow">INFRASTRUCTURE</p><h1>Provider Status</h1><p class="muted">Status konfigurasi provider di server.</p></div><button id="refreshHealth" class="btn ghost">Refresh</button></div><div class="panel content-panel"><div id="providerList" class="table-list">Memuat status...</div></div></section>
-<section class="page" id="page-monitor"><div class="page-head"><div><p class="eyebrow">INFRASTRUCTURE</p><h1>VPS Monitoring</h1><p class="muted">HTTP ping dan metrik VPS dari agent.</p></div><button id="refreshMonitor" class="btn ghost">Refresh</button></div><div class="panel content-panel"><h2>HTTP Ping</h2><div id="pingList" class="table-list">Memuat target...</div><p class="muted">Ping HTTP(S) mengukur waktu respons web, bukan ICMP.</p></div><div class="panel content-panel"><h2>VPS Metrics</h2><div id="metricsList" class="table-list">Menunggu agent VPS...</div></div></section>
 <p id="globalMessage" class="message"></p>
 <footer>KENZZ API <span>•</span> PRIVATE API INFRASTRUCTURE</footer>
 </main></section>

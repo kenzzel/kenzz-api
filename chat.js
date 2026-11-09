@@ -1,6 +1,6 @@
 import { createHash } from "node:crypto";
-import { adminDb } from "../../_lib/supabase.js";
-import { bearer, send, methodOnly, bodyObject } from "../../_lib/http.js";
+import { adminDb } from "../_lib/supabase.js";
+import { bearer, send, methodOnly, bodyObject } from "../_lib/http.js";
 
 const hashKey = key => createHash("sha256").update(key).digest("hex");
 const PROVIDERS = {
@@ -36,8 +36,7 @@ export default async function handler(req, res) {
   const provider = PROVIDERS[providerName];
   if (!provider) return send(res, 400, { error: "Unsupported provider", supported: Object.keys(PROVIDERS) });
   const apiKey = process.env[provider.env];
-  const defaults = { openai: "https://api.openai.com/v1", groq: "https://api.groq.com/openai/v1", deepseek: "https://api.deepseek.com/v1", together: "https://api.together.xyz/v1", mistral: "https://api.mistral.ai/v1" };
-  const base = process.env[provider.base] || defaults[providerName];
+  const base = process.env[provider.base];
   if (!apiKey || !base) return send(res, 503, { error: `Provider ${providerName} is not configured` });
 
   const messages = body.messages;
@@ -54,10 +53,7 @@ export default async function handler(req, res) {
   const started = Date.now();
   let statusCode = 502, usage = {}, errorMessage = null;
   try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 60000);
     const upstream = await fetch(`${base.replace(/\/$/, "")}/chat/completions`, {
-      signal: controller.signal,
       method: "POST",
       headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -66,7 +62,6 @@ export default async function handler(req, res) {
         max_tokens: Number.isInteger(body.max_tokens) ? Math.max(1, Math.min(4096, body.max_tokens)) : 1024
       })
     });
-    clearTimeout(timeout);
     statusCode = upstream.status;
     const text = await upstream.text();
     let result;

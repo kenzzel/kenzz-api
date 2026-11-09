@@ -1,6 +1,6 @@
-import { adminDb } from "../_lib/supabase.js";
-import { requireUser } from "../_lib/auth.js";
-import { send, methodOnly } from "../_lib/http.js";
+import { adminDb } from "./_lib/supabase.js";
+import { requireUser } from "./_lib/auth.js";
+import { send, methodOnly } from "./_lib/http.js";
 export default async function handler(req, res) {
   if (!methodOnly(req, res, "GET")) return;
   const user = await requireUser(req, res);

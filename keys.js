@@ -1,7 +1,7 @@
 import { randomBytes, createHash } from "node:crypto";
-import { adminDb } from "../_lib/supabase.js";
-import { requireUser } from "../_lib/auth.js";
-import { send, bodyObject } from "../_lib/http.js";
+import { adminDb } from "./_lib/supabase.js";
+import { requireUser } from "./_lib/auth.js";
+import { send, bodyObject } from "./_lib/http.js";
 
 const hashKey = key => createHash("sha256").update(key).digest("hex");
 
